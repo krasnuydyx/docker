@@ -32,13 +32,17 @@ RUN ssh-keygen -t dsa -f /etc/ssh/ssh_host_dsa_key -N ''
 RUN ssh-keygen -t ed25519 -f /etc/ssh/ssh_host_ed25519_key -N ''
 # Configure rabbit
 RUN /usr/sbin/rabbitmq-plugins enable rabbitmq_management
+# mysql configuration
+RUN sed -i "s/--initialize/--initialize-insecure/g" /usr/bin/mysqld_pre_systemd
+RUN sed -i "s/--init-file=\"\$initfile\"//g" /usr/bin/mysqld_pre_systemd
+RUN /usr/bin/mysqld_pre_systemd
 # Create supervisor config
 RUN sed -i "s|nodaemon=false|nodaemon=true|g" /etc/supervisord.conf
 RUN echo -e '[program:sshd]\ncommand=/usr/sbin/sshd -D' >> /etc/supervisord.d/sshd.ini
-RUN echo -e '[progrem:mysqld]\ncommand=/bin/bash -c "/usr/bin/mysqld_pre_systemd && exec /usr/sbin/mysqld --daemonize"' >> /etc/supervisord.d/mysqld.ini
+RUN echo -e '[program:mysqld]\nexitcodes=0,1,127\nstartsecs=0\ncommand=/usr/sbin/mysqld --user=mysql' >> /etc/supervisord.d/mysqld.ini
 RUN echo -e '[program:httpd]\ncommand=/usr/sbin/httpd -DFOREGROUND' >> /etc/supervisord.d/httpd.ini
 RUN echo -e '[program:rabbit]\ncommand=/usr/sbin/rabbitmq-server\nautostart=true\nautorestart=unexpected\nstdout_logfile=/var/log/rabbit.log\nredirect_stderr=true\nexitcodes=0,1,127' >> /etc/supervisord.d/rabbit.ini
-#RUN echo -e '[program:solr]\nautostart=true\nnautorestart=unexpected\nstdout_logfile=/var/log/solr.log\nredirect_stderr=true\nexitcodes=0,1,127\nstartsecs=0\ncommand=/etc/init.d/solr start' >> /etc/supervisord.d/solr.ini
+#RUN echo -e '[program:solr]\nautostart=true\nautorestart=unexpected\nstdout_logfile=/var/log/solr.log\nredirect_stderr=true\nexitcodes=0,1,127\nstartsecs=0\ncommand=/etc/init.d/solr start' >> /etc/supervisord.d/solr.ini
 # Install composer
 RUN curl -sS https://getcomposer.org/installer | php
 RUN mv composer.phar /usr/local/bin/composer
