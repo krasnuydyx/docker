@@ -24,6 +24,7 @@ RUN chmod -R 775 /var/www
 # Enable xdebug and set timezone
 RUN echo -e 'zend_extension=xdebug.so\nxdebug.max_nesting_level=200\nxdebug.remote_enable=1\nxdebug.remote_connect_back=1' >> /etc/php.d/15-xdebug.ini
 RUN echo 'date.timezone = America/Chicago' >> /etc/php.ini
+RUN echo 'session.save_path = /tmp' >> /etc/php.ini
 # Install sshd and supervisor
 RUN yum -y install openssh-server supervisor rabbitmq-server
 # Generate ssh host keys
