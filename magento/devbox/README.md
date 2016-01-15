@@ -38,13 +38,13 @@
     ssh -l centos $DOCKERIP
     ```
 ### Default credentials
-  1. Container access
+  Container access
   
   ```
   username => centos
   password => 123123q
   ```
-  1. Mysql access
+  Mysql access
   
   ```
   username => root
