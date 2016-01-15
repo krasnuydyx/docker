@@ -9,9 +9,9 @@ RUN rpm -iU https://dev.mysql.com/get/mysql57-community-release-el7-7.noarch.rpm
 RUN yum-config-manager --enable remi remi-php70
 # Update system
 RUN yum -y update
-# Install sudo, git and mysql
-RUN yum -y install sudo git mysql-community-server mysql-community-client
-# Install php with extentions for magento (httpd installed as dependency, "exit 0" is workground for aufs problem)
+# Install httpd, git, mysql and sudo
+RUN yum -y install httpd mod_ssl git mysql-community-server mysql-community-client sudo
+# Install php with extentions for magento ("exit 0" is workground for aufs problem)
 RUN yum -y install php php-bcmath php-cli php-common php-gd php-intl php-json php-mbstring php-mcrypt php-mysqlnd php-opcache php-pdo php-pear php-pecl-xdebug php-precess php-soap php-xml phpunit ; exit 0
 # Mods to avoid problems with perms in Mage dev env
 RUN useradd -m -s /bin/bash -G wheel centos
@@ -53,6 +53,6 @@ RUN yum clean all
 # Run supervisord
 CMD /usr/bin/supervisord
 LABEL version="1.0"
-EXPOSE 22 80 443 3389
-ENV TESTENV=test
+EXPOSE 22 80 443 3306 5672
+ENV TESTVAR=testvar
 VOLUME /var/www/html
