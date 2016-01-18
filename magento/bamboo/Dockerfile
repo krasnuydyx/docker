@@ -21,9 +21,11 @@ RUN echo -e "123123q\n123123q" | passwd centos
 RUN mkdir -p /var/www/html /var/log/httpd /var/www/html
 RUN chown -R centos:apache /var/www
 RUN chmod -R 775 /var/www
-# Enable xdebug and set timezone
+# Enable xdebug, set timezone, set session.save_path and change memory limit
 RUN echo -e 'zend_extension=xdebug.so\nxdebug.max_nesting_level=200\nxdebug.remote_enable=1\nxdebug.remote_connect_back=1' >> /etc/php.d/15-xdebug.ini
 RUN echo 'date.timezone = America/Chicago' >> /etc/php.ini
+RUN echo 'session.save_path = /tmp' >> /etc/php.ini
+RUN sed -i 's/memory_limit\ \=.*/memory_limit\ \=\ -1/g' /etc/php.ini
 # Install sshd and supervisor
 RUN yum -y install openssh-server supervisor rabbitmq-server
 # Generate ssh host keys
