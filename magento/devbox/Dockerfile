@@ -12,7 +12,7 @@ RUN yum -y update
 # Install git, mysql and sudo
 RUN yum -y install git mysql-community-server mysql-community-client sudo
 # Install Apache and php with extentions for magento ("exit 0" is workground for aufs problem)
-RUN yum -y install httpd mod_ssl php php-bcmath php-cli php-common php-gd php-intl php-json php-mbstring php-mcrypt php-mysqlnd php-opcache php-pdo php-pear php-pecl-xdebug php-precess php-soap php-xml phpunit ; exit 0
+RUN yum -y install httpd mod_ssl php php-bcmath php-cli php-common php-gd php-intl php-json php-mbstring php-mcrypt php-mysqlnd php-opcache php-pdo php-pear php-pecl-xdebug php-precess php-soap php-xml php-pecl-zip phpunit ; exit 0
 # Mods to avoid problems with perms in Mage dev env
 RUN useradd -m -s /bin/bash -G wheel centos
 RUN usermod -a -G apache centos
@@ -47,7 +47,7 @@ RUN echo -e '[program:rabbit]\ncommand=/usr/sbin/rabbitmq-server\nautostart=true
 #RUN echo -e '[program:solr]\nautostart=true\nautorestart=unexpected\nstdout_logfile=/var/log/solr.log\nredirect_stderr=true\nexitcodes=0,1,127\nstartsecs=0\ncommand=/etc/init.d/solr start' >> /etc/supervisord.d/solr.ini
 # Install composer
 RUN curl -sS https://getcomposer.org/installer | php
-RUN mv composer.phar /usr/local/bin/composer
+RUN mv composer.phar /usr/bin/composer
 # Clean yum cache
 RUN yum clean all
 # Run supervisord
