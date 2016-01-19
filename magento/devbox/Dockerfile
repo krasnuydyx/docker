@@ -48,6 +48,8 @@ RUN echo -e '[program:rabbit]\ncommand=/usr/sbin/rabbitmq-server\nautostart=true
 # Install composer
 RUN curl -sS https://getcomposer.org/installer | php
 RUN mv composer.phar /usr/bin/composer
+# Add apache config
+RUN echo -e '<VirtualHost *:80>\n DocumentRoot /var/www/html\n ServerName default\n <Directory /var/www/html>\n  Options Indexes FollowSymLinks\n  AllowOverride All\n  Require all granted\n </Directory>\n</VirtualHost>' >> /etc/httpd/conf.d/mage.conf
 # Clean yum cache
 RUN yum clean all
 # Run supervisord
