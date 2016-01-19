@@ -8,6 +8,7 @@
 | PHP | 7.0.2 |
 | RabbitMQ | 3.3.5 |
 | OpenSSH | 6.6 |
+| Composer | 1.0-dev |
 
 ### Requirements
 [Docker Install Guide](https://docs.docker.com/engine/installation)
