@@ -16,7 +16,7 @@
   1. Download Dockerfile and build image in same dir
   
     ```
-    docker build -t magebox .
+    docker build --pull -t magebox .
     ```
   1. Run container from newly build image
   
