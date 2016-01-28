@@ -10,7 +10,7 @@ RUN yum -y update
 # Install git, mysql and sudo
 RUN yum -y install git mysql-community-server mysql-community-client sudo
 # Install Apache and php with extentions for magento ("exit 0" is workground for aufs problem)
-RUN yum -y install httpd mod_ssl php php-bcmath php-cli php-common php-gd php-intl php-json php-mbstring php-mcrypt php-mysqlnd php-pdo php-pear php-pecl-xdebug php-precess php-soap php-xml php-pecl-zip phpunit ; exit 0
+RUN yum -y install httpd mod_ssl php php-bcmath php-cli php-common php-gd php-intl php-json php-mbstring php-mcrypt php-mysqlnd php-pdo php-pear php-pecl-xdebug php-precess php-soap php-xml php-pecl-zip php-phpunit-phpcpd phpunit ; exit 0
 # Mods to avoid problems with perms in Mage dev env
 RUN useradd -m -s /bin/bash -G wheel centos && usermod -a -G apache centos && usermod -a -G centos apache
 RUN echo -e "123123q\n123123q" | passwd centos
