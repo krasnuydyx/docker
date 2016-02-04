@@ -2,6 +2,8 @@
 # Get latest centos image from hub
 FROM centos:latest
 MAINTAINER Andrii Danyliuk <krasnuy.dyx@gmail.com>
+# Replacing sh with bash
+RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 # Add epel, remi, mysql repos and activate them
 RUN yum -y install epel-release yum-utils && rpm -iU http://rpms.famillecollet.com/enterprise/remi-release-7.rpm && rpm -iU https://dev.mysql.com/get/mysql57-community-release-el7-7.noarch.rpm
 RUN yum-config-manager --enable remi remi-php70 | grep "repo:\|enabled"
