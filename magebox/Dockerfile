@@ -9,8 +9,8 @@ RUN yum -y install epel-release yum-utils && rpm -iU http://rpms.famillecollet.c
 RUN yum-config-manager --enable remi remi-php70 | grep "repo:\|enabled"
 # Update system
 RUN yum -y update
-# Install git, mysql and sudo
-RUN yum -y install git mysql-community-server mysql-community-client sudo
+# Install git, mysql, sudo and mail
+RUN yum -y install git mysql-community-server mysql-community-client sudo postfix mailx
 # Install Apache and php with extentions for magento ("exit 0" is workground for aufs problem)
 RUN yum -y install httpd mod_ssl php php-bcmath php-cli php-common php-gd php-intl php-json php-mbstring php-mcrypt php-mysqlnd php-pdo php-pear php-pecl-xdebug php-precess php-soap php-xml php-pecl-zip php-phpunit-phpcpd phpunit ; exit 0
 # Mods to avoid problems with perms in Mage dev env
@@ -28,9 +28,12 @@ RUN ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key -N '' && ssh-keygen -t dsa -f
 RUN /usr/sbin/rabbitmq-plugins enable rabbitmq_management
 # mysql configuration
 RUN sed -i "s/--initialize/--initialize-insecure/g" /usr/bin/mysqld_pre_systemd && sed -i "s/--init-file=\"\$initfile\"//g" /usr/bin/mysqld_pre_systemd && /usr/bin/mysqld_pre_systemd
+# install mail
+RUN /usr/libexec/postfix/aliasesdb && /usr/libexec/postfix/chroot-update && echo "* discard:" >> /etc/postfix/transport && postmap /etc/postfix/transport
 # Create supervisor config
 RUN sed -i "s|nodaemon=false|nodaemon=true|g" /etc/supervisord.conf
 RUN echo -e '[program:sshd]\ncommand=/usr/sbin/sshd -D' >> /etc/supervisord.d/sshd.ini
+RUN echo -e '[program:postfix]\ncommand=/usr/sbin/postfix start >> /etc/supervisord.d/postfix.ini'
 RUN echo -e '[program:mysqld]\nexitcodes=0,1,127\nstartsecs=0\ncommand=/usr/sbin/mysqld --user=mysql' >> /etc/supervisord.d/mysqld.ini
 RUN echo -e '[program:httpd]\ncommand=/usr/sbin/httpd -DFOREGROUND' >> /etc/supervisord.d/httpd.ini
 RUN echo -e '[program:rabbit]\ncommand=/usr/sbin/rabbitmq-server\nautostart=true\nautorestart=unexpected\nstdout_logfile=/var/log/rabbit.log\nredirect_stderr=true\nexitcodes=0,1,127' >> /etc/supervisord.d/rabbit.ini
