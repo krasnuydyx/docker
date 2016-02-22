@@ -12,7 +12,9 @@ RUN yum -y update
 # Install git, mysql, sudo and mail
 RUN yum -y install git mysql-community-server mysql-community-client sudo postfix mailx
 # Install Apache and php with extentions for magento ("exit 0" is workground for aufs problem)
-RUN yum -y install httpd mod_ssl php php-bcmath php-cli php-common php-gd php-intl php-json php-mbstring php-mcrypt php-mysqlnd php-pdo php-pear php-pecl-xdebug php-precess php-soap php-xml php-pecl-zip php-phpunit-phpcpd phpunit ; exit 0
+RUN yum -y install httpd mod_ssl php php-bcmath php-cli php-common php-gd php-intl php-json php-mbstring php-mcrypt php-mysqlnd php-pdo php-pear php-pecl-xdebug php-precess php-soap php-xml php-pecl-zip ; exit 0
+# Install phpunit and phpcpd
+RUN wget https://phar.phpunit.de/phpunit.phar && wget https://phar.phpunit.de/phpcpd.phar && chmod +x php* && cp phpunit.phar /usr/bin/phpunit && cp phpcpd.phar /usr/bin/phpcpd && rm -rf php*
 # Mods to avoid problems with perms in Mage dev env
 RUN useradd -m -s /bin/bash -G wheel centos && usermod -a -G apache centos && usermod -a -G centos apache
 RUN echo -e "123123q\n123123q" | passwd centos
@@ -44,9 +46,6 @@ RUN curl -sS https://getcomposer.org/installer | php && mv composer.phar /usr/bi
 RUN echo -e '<VirtualHost *:80>\n DocumentRoot /var/www/html\n ServerName default\n <Directory /var/www/html>\n  Options Indexes FollowSymLinks\n  AllowOverride All\n  Require all granted\n </Directory>\n</VirtualHost>' >> /etc/httpd/conf.d/mage.conf
 # Clean yum cache
 RUN yum clean all
-# Run supervisord
 CMD /usr/bin/supervisord
-LABEL version="1.0"
 EXPOSE 22 80 443 3306 5672
-ENV TESTVAR=testvar
 VOLUME /var/www/html
