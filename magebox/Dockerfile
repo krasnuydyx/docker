@@ -5,14 +5,14 @@ MAINTAINER Andrii Danyliuk <krasnuy.dyx@gmail.com>
 # Replacing sh with bash
 RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 # Add epel, remi, mysql repos and activate them
-RUN yum -yq install epel-release yum-utils && rpm --quiet -iU http://rpms.famillecollet.com/enterprise/remi-release-7.rpm && rpm --quiet -iU https://dev.mysql.com/get/mysql57-community-release-el7-7.noarch.rpm
+RUN yum -y -q install epel-release yum-utils && rpm --quiet -iU http://rpms.famillecollet.com/enterprise/remi-release-7.rpm && rpm --quiet -iU https://dev.mysql.com/get/mysql57-community-release-el7-7.noarch.rpm
 RUN yum-config-manager --enable remi remi-php70 | grep "repo:\|enabled"
 # Update system
-RUN yum -yq update
+RUN yum -y -q update
 # Install git, mysql, sudo and mail
-RUN yum -yq install git mysql-community-server mysql-community-client sudo postfix mailx wget
+RUN yum -y -q install git mysql-community-server mysql-community-client sudo postfix mailx wget
 # Install Apache and php with extentions for magento ("exit 0" is workground for aufs problem)
-RUN yum -yq install httpd mod_ssl php php-bcmath php-cli php-common php-gd php-intl php-json php-mbstring php-mcrypt php-mysqlnd php-pdo php-pear php-pecl-xdebug php-precess php-soap php-xml php-pecl-zip ; exit 0
+RUN yum -y -q install httpd mod_ssl php php-bcmath php-cli php-common php-gd php-intl php-json php-mbstring php-mcrypt php-mysqlnd php-pdo php-pear php-pecl-xdebug php-precess php-soap php-xml php-pecl-zip ; exit 0
 # Install phpunit and phpcpd
 RUN wget -q https://phar.phpunit.de/phpunit.phar && wget -q https://phar.phpunit.de/phpcpd.phar && chmod +x php* && cp phpunit.phar /usr/bin/phpunit && cp phpcpd.phar /usr/bin/phpcpd && rm -rf php*
 # Mods to avoid problems with perms in Mage dev env
@@ -23,7 +23,7 @@ RUN mkdir -p /var/www/html /var/log/httpd /var/www/html && chown -R centos:apach
 RUN echo -e 'zend_extension=xdebug.so\nxdebug.max_nesting_level=200\nxdebug.remote_enable=1\nxdebug.remote_connect_back=1' > /etc/php.d/15-xdebug.ini
 RUN echo 'date.timezone = America/Chicago' >> /etc/php.ini && echo 'session.save_path = /tmp' >> /etc/php.ini && sed -i 's/memory_limit\ \=.*/memory_limit\ \=\ -1/g' /etc/php.ini
 # Install sshd and supervisor
-RUN yum -yq install openssh-server supervisor rabbitmq-server
+RUN yum -y -q install openssh-server supervisor rabbitmq-server
 # Generate ssh host keys
 RUN ssh-keygen -q -t rsa -f /etc/ssh/ssh_host_rsa_key -N '' && ssh-keygen -q -t dsa -f /etc/ssh/ssh_host_dsa_key -N '' && ssh-keygen -q -t ed25519 -f /etc/ssh/ssh_host_ed25519_key -N ''
 # Configure rabbit
