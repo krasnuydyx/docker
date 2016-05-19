@@ -5,10 +5,10 @@
 | CentOS | 7 |
 | Apache | 2.4 |
 | Mysql | 5.7 |
-| PHP | 7.0.2 |
+| PHP | 7.0.6 |
 | RabbitMQ | 3.3.5 |
 | OpenSSH | 6.6 |
-| Composer | 1.0-dev |
+| Composer | 1.1.0 |
 
 ### Requirements
 [Docker Install Guide](https://docs.docker.com/engine/installation)
