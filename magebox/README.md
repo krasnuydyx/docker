@@ -4,11 +4,12 @@
 | ----- | ----- |
 | CentOS | 7 |
 | Apache | 2.4 |
-| Mysql | 5.7 |
-| PHP | 7.0.6 |
+| Mysql | 5.6 |
+| PHP | 7.0.7 |
 | RabbitMQ | 3.3.5 |
+| Elasticsearch | 2.3.3 |
 | OpenSSH | 6.6 |
-| Composer | 1.1.0 |
+| Composer | 1.1.1 |
 
 ### Requirements
 [Docker Install Guide](https://docs.docker.com/engine/installation)
