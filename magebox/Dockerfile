@@ -35,6 +35,7 @@ RUN /usr/bin/mysql-systemd-start pre
 # install mail
 RUN /usr/libexec/postfix/aliasesdb && /usr/libexec/postfix/chroot-update && echo "* discard:" >> /etc/postfix/transport && postmap /etc/postfix/transport
 # Install elastic
+RUN echo -e '[el]\nname=Elasticsearch repository\nbaseurl=https://packages.elastic.co/elasticsearch/2.x/centos\ngpgcheck=1\ngpgkey=https://packages.elastic.co/GPG-KEY-elasticsearch\nenabled=1' >> /etc/yum.repos.d/el.repo
 RUN rpm --import https://packages.elastic.co/GPG-KEY-elasticsearch ; yum -y -q install elasticsearch
 # Create supervisor config
 RUN sed -i "s|nodaemon=false|nodaemon=true|g" /etc/supervisord.conf
@@ -45,7 +46,7 @@ RUN echo -e '[program:httpd]\ncommand=/usr/sbin/httpd -DFOREGROUND' >> /etc/supe
 RUN echo -e '[program:rabbit]\ncommand=/usr/sbin/rabbitmq-server\nautostart=true\nautorestart=unexpected\nstdout_logfile=/var/log/rabbit.log\nredirect_stderr=true\nexitcodes=0,1,127' >> /etc/supervisord.d/rabbit.ini
 RUN echo -e '[program:el]\ncommand=/usr/bin/sudo -u elasticsearch /usr/share/elasticsearch/bin/elasticsearch -d -Des.default.path.home=/usr/share/elasticsearch/ -Des.default.path.data=/var/lib/elasticsearch/ -Des.default.path.conf=/etc/elasticsearch/ -Des.default.path.logs=/var/log/elasticsearch/\nautostart=true\nautorestart=unexpected\nstdout_logfile=/var/log/rabbit.log\nredirect_stderr=true\nexitcodes=0,1,127' >> /etc/supervisor.d/el.ini
 RUN echo -e '[program:crond]\ncommand=/usr/sbin/crond' >> /etc/supervisord.d/crond.ini
-#RUN echo -e '[program:solr]\nautostart=true\nautorestart=unexpected\nstdout_logfile=/var/log/solr.log\nredirect_stderr=true\nexitcodes=0,1,127\nstartsecs=0\ncommand=/etc/init.d/solr start' >> /etc/supervisord.d/solr.ini
+RUN echo -e '[program:solr]\nautostart=true\nautorestart=unexpected\nstdout_logfile=/var/log/solr.log\nredirect_stderr=true\nexitcodes=0,1,127\nstartsecs=0\ncommand=/etc/init.d/solr start' >> /etc/supervisord.d/solr.ini
 # Install composer
 RUN curl -sS https://getcomposer.org/installer | php && mv composer.phar /usr/bin/composer
 # Add apache config
