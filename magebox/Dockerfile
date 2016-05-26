@@ -7,6 +7,7 @@ RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 # Add epel, remi, mysql repos and activate them
 RUN yum -y -q install epel-release yum-utils && rpm --quiet -iU http://rpms.famillecollet.com/enterprise/remi-release-7.rpm && rpm --quiet -iU https://dev.mysql.com/get/mysql57-community-release-el7-7.noarch.rpm
 RUN yum-config-manager --enable remi remi-php70 | grep "repo:\|enabled"
+RUN yum-config-manager --disable mysql57-community | grep "repo:\|disabled" ; yum-config-manager --enable mysql56-community | grep "repo:\|enabled"
 # Update system
 RUN yum -y -q update
 # Install git, mysql, sudo and mail
@@ -29,9 +30,12 @@ RUN ssh-keygen -q -t rsa -f /etc/ssh/ssh_host_rsa_key -N '' && ssh-keygen -q -t 
 # Configure rabbit
 RUN /usr/sbin/rabbitmq-plugins enable rabbitmq_management
 # mysql configuration
-RUN sed -i "s/--initialize/--initialize-insecure/g" /usr/bin/mysqld_pre_systemd && sed -i "s/--init-file=\"\$initfile\"//g" /usr/bin/mysqld_pre_systemd && /usr/bin/mysqld_pre_systemd
+#mysql57#RUN sed -i "s/--initialize/--initialize-insecure/g" /usr/bin/mysqld_pre_systemd && sed -i "s/--init-file=\"\$initfile\"//g" /usr/bin/mysqld_pre_systemd && /usr/bin/mysqld_pre_systemd
+RUN /usr/bin/mysql-systemd-start pre
 # install mail
 RUN /usr/libexec/postfix/aliasesdb && /usr/libexec/postfix/chroot-update && echo "* discard:" >> /etc/postfix/transport && postmap /etc/postfix/transport
+# Install elastic
+RUN rpm --import https://packages.elastic.co/GPG-KEY-elasticsearch ; yum -y -q install elasticsearch
 # Create supervisor config
 RUN sed -i "s|nodaemon=false|nodaemon=true|g" /etc/supervisord.conf
 RUN echo -e '[program:sshd]\ncommand=/usr/sbin/sshd -D' >> /etc/supervisord.d/sshd.ini
@@ -39,6 +43,8 @@ RUN echo -e '[program:postfix]\ncommand=/usr/sbin/postfix start >> /etc/supervis
 RUN echo -e '[program:mysqld]\nexitcodes=0,1,127\nstartsecs=0\ncommand=/usr/sbin/mysqld --user=mysql' >> /etc/supervisord.d/mysqld.ini
 RUN echo -e '[program:httpd]\ncommand=/usr/sbin/httpd -DFOREGROUND' >> /etc/supervisord.d/httpd.ini
 RUN echo -e '[program:rabbit]\ncommand=/usr/sbin/rabbitmq-server\nautostart=true\nautorestart=unexpected\nstdout_logfile=/var/log/rabbit.log\nredirect_stderr=true\nexitcodes=0,1,127' >> /etc/supervisord.d/rabbit.ini
+RUN echo -e '[program:el]\ncommand=/usr/bin/sudo -u elasticsearch /usr/share/elasticsearch/bin/elasticsearch -d -Des.default.path.home=/usr/share/elasticsearch/ -Des.default.path.data=/var/lib/elasticsearch/ -Des.default.path.conf=/etc/elasticsearch/ -Des.default.path.logs=/var/log/elasticsearch/\nautostart=true\nautorestart=unexpected\nstdout_logfile=/var/log/rabbit.log\nredirect_stderr=true\nexitcodes=0,1,127' >> /etc/supervisor.d/el.ini
+RUN echo -e '[program:crond]\ncommand=/usr/sbin/crond' >> /etc/supervisord.d/crond.ini
 #RUN echo -e '[program:solr]\nautostart=true\nautorestart=unexpected\nstdout_logfile=/var/log/solr.log\nredirect_stderr=true\nexitcodes=0,1,127\nstartsecs=0\ncommand=/etc/init.d/solr start' >> /etc/supervisord.d/solr.ini
 # Install composer
 RUN curl -sS https://getcomposer.org/installer | php && mv composer.phar /usr/bin/composer
