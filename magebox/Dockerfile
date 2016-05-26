@@ -10,8 +10,8 @@ RUN yum-config-manager --enable remi remi-php70 | grep "repo:\|enabled"
 RUN yum-config-manager --disable mysql57-community | grep "repo:\|disabled" ; yum-config-manager --enable mysql56-community | grep "repo:\|enabled"
 # Update system
 RUN yum -y -q update
-# Install git, mysql, sudo and mail
-RUN yum -y -q install git mysql-community-server mysql-community-client sudo postfix mailx wget
+# Install git, mysql, sudo, mail and cron
+RUN yum -y -q install git mysql-community-server mysql-community-client sudo postfix mailx wget cronie
 # Install Apache and php with extentions for magento ("exit 0" is workground for aufs problem)
 RUN yum -y -q install httpd mod_ssl php php-bcmath php-cli php-common php-gd php-intl php-json php-mbstring php-mcrypt php-mysqlnd php-pdo php-pear php-pecl-xdebug php-precess php-soap php-xml php-pecl-zip ; exit 0
 # Install phpunit and phpcpd
