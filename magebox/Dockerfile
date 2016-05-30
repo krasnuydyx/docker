@@ -40,8 +40,8 @@ RUN echo -e '[el]\nname=Elasticsearch repository\nbaseurl=https://packages.elast
  rpm --import https://packages.elastic.co/GPG-KEY-elasticsearch ; yum -y -q install elasticsearch
 # Create supervisor config
 RUN sed -i "s|nodaemon=false|nodaemon=true|g" /etc/supervisord.conf; echo -e '[program:sshd]\ncommand=/usr/sbin/sshd -D' >> /etc/supervisord.d/sshd.ini; \
- echo -e '[program:postfix]\ncommand=/usr/sbin/postfix start >> /etc/supervisord.d/postfix.ini'; \
- echo -e '[program:mysqld]\nexitcodes=0,1,127\nstartsecs=0\ncommand=/usr/sbin/mysqld --user=mysql' >> /etc/supervisord.d/mysqld.ini' \
+ echo -e '[program:postfix]\ncommand=/usr/sbin/postfix start' >> /etc/supervisord.d/postfix.ini; \
+ echo -e '[program:mysqld]\nexitcodes=0,1,127\nstartsecs=0\ncommand=/usr/sbin/mysqld --user=mysql' >> /etc/supervisord.d/mysqld.ini \
  echo -e '[program:httpd]\ncommand=/usr/sbin/httpd -DFOREGROUND' >> /etc/supervisord.d/httpd.ini; \
  echo -e '[program:rabbit]\ncommand=/usr/sbin/rabbitmq-server\nautostart=true\nautorestart=unexpected\nstdout_logfile=/var/log/rabbit.log\nredirect_stderr=true\nexitcodes=0,1,127' >> /etc/supervisord.d/rabbit.ini; \
  echo -e '[program:el]\ncommand=/usr/bin/sudo -u elasticsearch /usr/share/elasticsearch/bin/elasticsearch -Des.default.path.home=/usr/share/elasticsearch/ -Des.default.path.data=/var/lib/elasticsearch/ -Des.default.path.conf=/etc/elasticsearch/ -Des.default.path.logs=/var/log/elasticsearch/\nautostart=true\nautorestart=unexpected\nstdout_logfile=/var/log/el.log\nredirect_stderr=true\nexitcodes=0,1,127' >> /etc/supervisord.d/el.ini; \
