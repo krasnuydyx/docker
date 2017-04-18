@@ -1,15 +1,14 @@
-# Docker base image on centos for developers
+# Magento docker base image on centos for developers
 #### Software (Versions may be higher)
 | Name | Version |
 | ----- | ----- |
-| CentOS | 7 |
-| Apache | 2.4 |
-| Mysql | 5.6 |
-| PHP | 7.0.7 |
+| CentOS | 7.3.1611 |
+| Apache | 2.4.6 |
+| Mysql | 5.7 |
+| PHP | 7.0.17 |
 | RabbitMQ | 3.3.5 |
-| Elasticsearch | 2.3.3 |
-| OpenSSH | 6.6 |
-| Composer | 1.1.1 |
+| OpenSSH | 6.6.1 |
+| Composer | 1.4.1 |
 
 ### Requirements
 [Docker Install Guide](https://docs.docker.com/engine/installation)
@@ -17,12 +16,12 @@
   1. Download Dockerfile and build image in same dir
   
     ```
-    docker build --pull -t magebox .
+    docker build -t magebox .
     ```
   1. Run container from newly build image
   
     ```
-    docker run -d magebox
+    docker run -tdi magebox
     ```
   1. Find container id
   
