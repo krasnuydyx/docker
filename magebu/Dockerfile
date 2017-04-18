@@ -2,14 +2,15 @@
 FROM ubuntu:latest
 MAINTAINER Andrii Danyliuk <krasnuy.dyx@gmail.com>
 # Don't prompt for configuration settings when using apt-get
-ENV DEBIAN_FRONTEND=noninteractive HOSTNAME=bambobox TZ=America/Los_Angeles
-RUN echo $TZ | tee /etc/timezone; dpkg-reconfigure --frontend noninteractive tzdata; rm /bin/sh; ln -s /bin/bash /bin/sh
-# Install distro Apache, JDK 8, PHP 7.0, etc
-RUN apt-get -qq update; apt-get -qq full-upgrade > /dev/null; apt-get install -qq acl sudo apt-utils apache2 openjdk-8-jdk-headless ssh \
- dialog debconf-utils libapache2-mod-php wget vim php7.0 php7.0-curl php7.0-mcrypt php7.0-gd php7.0-mysql php7.0-intl curl git \
- php7.0-mcrypt php7.0-intl php7.0-opcache php7.0-zip zip unzip php7.0-xml php7.0-bcmath php7.0-mbstring php7.0-xsl php7.0-soap > /dev/null
+ENV DEBIAN_FRONTEND=noninteractive
+# Install distro Apache, JDK 8, PHP 7.1, etc
+RUN apt-get -qq update; apt-get install -qq apt-utils; apt-get install -qq software-properties-common python-software-properties > /dev/null; \
+ add-apt-repository -y -u ppa:ondrej/php; apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 4F4EA0AAE5267A6C; \
+ apt-get -qq update; apt-get -qq full-upgrade > /dev/null; apt-get install -qq acl sudo apt-utils apache2 openjdk-8-jdk-headless ssh \
+ dialog debconf-utils libapache2-mod-php wget vim php7.1 php7.1-curl php7.1-mcrypt php7.1-gd php7.1-mysql php7.1-intl curl git \
+ php7.1-mcrypt php7.1-intl php7.1-opcache php7.1-zip zip unzip php7.1-xml php7.1-bcmath php7.1-mbstring php7.1-xsl php7.1-soap php7.1-xdebug > /dev/null
 # Install MySQL for Xenial (v5.7)
-RUN echo "mysql-server-5.7 mysql-server/root_password password" | debconf-set-selections ; \
+RUN rm /bin/sh; ln -s /bin/bash /bin/sh; echo "mysql-server-5.7 mysql-server/root_password password" | debconf-set-selections ; \
  echo "mysql-server-5.7 mysql-server/root_password_again password" | debconf-set-selections ; apt-get -qq install mysql-server mysql-client > /dev/null
 # Set timezone, set session.save_path, and change memory limit for both CLI and Apache PHP 7.0
 RUN echo 'always_populate_raw_post_data = -1' >> /etc/php/7.0/cli/php.ini; echo 'date.timezone = America/Los_Angeles' >> /etc/php/7.0/cli/php.ini; echo 'session.save_path = /tmp' >> /etc/php/7.0/cli/php.ini; sed -i 's/memory_limit\ \=.*/memory_limit\ \=\ 5G/g' /etc/php/7.0/cli/php.ini
