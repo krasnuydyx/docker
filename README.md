@@ -1,3 +1,2 @@
 # docker
-Docker related configs
-test
+Magento 2 environments

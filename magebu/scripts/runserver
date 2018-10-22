@@ -1,7 +1,6 @@
 /etc/init.d/ssh start
 /etc/init.d/mysql start
 /etc/init.d/rabbitmq-server start
-/etc/init.d/solr start
 /etc/init.d/postfix start
 export START_DAEMON=true && /etc/init.d/elasticsearch start
 source /etc/apache2/envvars
